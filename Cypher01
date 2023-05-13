@@ -1,0 +1,75 @@
+LOAD CSV WITH HEADERS FROM 'file:///Harvesting01.csv' AS csv
+MERGE (harvesting:Harvesting {
+  harvesting_id: csv.Harvesting_id,
+  farm_name: csv.farm_name,
+  subsequent_id: csv.subsequent_id,
+  iph_id: csv.iph_id,
+  item_name: csv.item_name,
+  quantity: csv.quantity,
+  location_id: csv.location_id,
+  field_id: csv.field_id,
+  mobile_id: csv.mobile_id
+});
+
+LOAD CSV WITH HEADERS FROM 'file:///Cooling01.csv' AS line
+CREATE (c:Cooling {
+    DateTime: datetime(line.DateTime),
+    cooling_id: line.cooling_id,
+    location_ID: toInteger(line.location_ID),
+    item_name: line.item_name,
+    quantity: toInteger(line.quantity),
+    Harvesting_id: line.Harvesting_id,
+    Mobile_ID: toInteger(line.Mobile_ID),
+    subsequent_id: line.subsequent_id,
+    is_contaminated: (line.is_contaminated = 'TRUE')
+});
+
+LOAD CSV WITH HEADERS FROM 'file:///Initial_Packing01.csv' AS line
+CREATE (ip:InitialPacking {
+    harvesting_date: date(line.harvesting_date),
+    mobile_id: toInteger(line.mobile_id),
+    location_id: toInteger(line.location_id),
+    Lot_ID: line.Lot_ID,
+    recevied_date: date(line.recevied_date),
+    IP_ID: line.IP_ID,
+    item_name: line.item_name,
+    quantity: toInteger(line.quanity),
+    Harvesting_ID: line.Harvesting_ID,
+    field_id: toInteger(line.field_id),
+    date_of_cooling: date(line.date_of_cooling),
+    packed_datetime: datetime(line.packed_datetime),
+    Subsequent_ID: line.Subsequent_ID,
+    is_contaminated: (line.is_contaminated = 'TRUE')
+});
+
+LOAD CSV WITH HEADERS FROM 'file:///Shipping01.csv' AS line
+CREATE (s:Shipping {
+    Shiipped_Date: date(line.Shiipped_Date),
+    Lot_ID: toInteger(line.Lot_ID),
+    Shipping_ID: line.Shipping_ID,
+    Subsequent_ID: line.Subsequent_ID,
+    Harvesting_ID: line.Harvesting_ID,
+    Location_to_Shipping_ID: toInteger(line.Location_to_Shipping_ID),
+    Location_to_ID: toInteger(line.Location_to_ID),
+    is_contaminated: (line.is_contaminated = 'TRUE')
+});
+
+LOAD CSV WITH HEADERS FROM 'file:///Transformation01.csv' AS line
+CREATE (t:Transformation {
+    transformation_date: date(line.transformation_date),
+    item_name: line.item_name,
+    Transformation_ID: line.Transformation_ID,
+    Lot_ID: toInteger(line.Lot_ID),
+    farm_name: line.farm_name,
+    Harvesting_ID: line.Harvesting_ID,
+    product_desc: line.product_desc,
+    quantity: toInteger(line.quantity),
+    transformer_quantity: toInteger(line.transformer_quantity),
+    transfored_product_desc: line.transfored_product_desc,
+    lot_code_hyperlink: line.lot_code_hyperlink,
+    Subsequent_ID: toInteger(line.Subsequent_ID),
+    is_contaminated: (line.is_contaminated = 'TRUE')
+})
+
+
+

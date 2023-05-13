@@ -1,0 +1,9 @@
+match(h:Harvesting)
+match(c:Cooling)
+match(i:InitialPacking)
+match(sh:Shipping)
+match(t:Transformation)
+
+where h.subsequent_id = c.cooling_id and c.subsequent_id = ip.ip_id and ip.subsequent_id = sh.shipping_id and sh.subsequent_id = t.transformation_id
+
+create (h)-[:COOLED]->(c)-[:PACKED]->(i)-[:SHIPPED]->(sh)-[:TRANSFORMED]->(t)
